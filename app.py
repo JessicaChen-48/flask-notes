@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, request, redirect, flash, session
 
 from models import db, connect_db, User
 
@@ -40,13 +40,19 @@ def register():
     else:
         return render_template("register.html", form=form)
 
-@app.route("/secret")
-def show_secret_page():
-    if "username" not in session:
+@app.route("/users/<username>")
+def show_secret_page(username):
+
+    user = User.query.get(username)
+
+    print(f"user: {user.username}")
+    print(f"session: {session['username']}")
+
+    if not (session["username"] == user.username):
         flash("You must be logged in to view!")
         return redirect("/")
 
-    return render_template("secret.html")
+    return render_template("user_info.html", user=user)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -62,7 +68,7 @@ def login():
 
         if user:
             session["username"] = user.username  # keep logged in
-            return redirect("/secret")
+            return redirect(f"/users/{user.username}")
 
         else:
             form.username.errors = ["Incorrect name/password"]
@@ -71,6 +77,12 @@ def login():
 
 # end-login
 
+@app.route("/logout")
+def logout():
+    """Logs user out and redirects to homepage."""
 
+    session.pop("username", None)
+
+    return redirect("/")
 
 

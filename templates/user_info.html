@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %} {{user.first_name}}'s Information{% endblock %}
+
+{% block content %}
+
+Username: {{user.username}}
+Email: {{user.email}}
+First Name: {{user.first_name}}
+Last Name: {{user.last_name}}
+
+
+{% endblock %}
