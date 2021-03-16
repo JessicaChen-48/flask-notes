@@ -35,8 +35,6 @@ def register():
         db.session.commit()
 
         session["username"] = user.username
-        breakpoint()
-        print(session)
         return redirect("/secret")
 
     else:
@@ -70,7 +68,6 @@ def login():
             form.username.errors = ["Incorrect name/password"]
 
     return render_template("login.html", form=form)
-
 
 # end-login
 
