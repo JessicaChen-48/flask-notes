@@ -1,20 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %} Register Form {% endblock %}
+{% block title %} Login Form {% endblock %}
 
 {% block content %}
-
-<div class="container" style="margin-top: 2em">
-  {% for msg in get_flashed_messages() %}
-    <div class="alert alert-danger">{{ msg }}</div>
-  {% endfor %}
 
 <form action="" method="POST">
 
   {{ form.hidden_tag() }}
 
   {% for field in form if field.widget.input_type != 'hidden' %}
-
 
   <div class='form-group'>
     {{ field.label }}
@@ -27,7 +21,7 @@
 
 {% endfor %}
 
-<button type="submit">Register</button>
+<button type="submit">Login</button>
 </form>
 
 {% endblock %}

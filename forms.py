@@ -19,3 +19,13 @@ class RegisterForm(FlaskForm):
 
     last_name = StringField("Last Name",
         validators=[InputRequired(), Length(min=1, max=30)])
+
+
+class LoginForm(FlaskForm):
+    """ Login a user """
+
+    username = StringField("Username",
+        validators=[InputRequired(), Length(min=1, max=20)])
+
+    password = PasswordField("Password",
+        validators=[InputRequired()])
