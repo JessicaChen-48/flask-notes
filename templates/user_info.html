@@ -4,10 +4,23 @@
 
 {% block content %}
 
-Username: {{user.username}}
-Email: {{user.email}}
-First Name: {{user.first_name}}
-Last Name: {{user.last_name}}
+<p>Username: {{user.username}}</p>
+<p>Email: {{user.email}}</p>
+<p>First Name: {{user.first_name}}</p>
+<p>Last Name: {{user.last_name}}</p>
+{% for note in user.notes %}
+ <p> <a href="">Notes: {{note.title}}</a> </p>
+ <p>{{note.content}}</p>
+ <form action="/notes/{{note.id}}/delete" method="POST">
+   <button type="submit">Delete</button>
+</form>
+{%endfor%}
+
+<p> <a href="/users/{{user.username}}/notes/add">Add Note</a></p>
+
+<form action="/users/{{user.username}}/delete" method="POST">
+  <button type="submit">Delete User</button>
+</form>
 
 
 {% endblock %}
