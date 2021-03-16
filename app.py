@@ -47,9 +47,6 @@ def show_secret_page(username):
 
     user = User.query.get(username)
 
-    print(f"user: {user.username}")
-    print(f"session: {session['username']}")
-
     if "username" not in session:
         flash("You must be logged in to view!")
         return redirect("/")
@@ -127,6 +124,14 @@ def update_note(note_id):
     note = Note.query.get_or_404(note_id)
     form = NoteForm(obj=note)
 
+    if "username" not in session:
+        flash("You must be logged in to update note!")
+        return redirect("/")
+
+    if not (session["username"] == note.user.username):
+        flash("You're not authorized")
+        return redirect("/")
+
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
@@ -143,6 +148,14 @@ def update_note(note_id):
 def delete_note(note_id):
     note = Note.query.get_or_404(note_id)
     curr_user = note.user.username
+
+    if "username" not in session:
+        flash("You must be logged in to update note!")
+        return redirect("/")
+
+    if not (session["username"] == curr_user):
+        flash("You're not authorized")
+        return redirect("/")
 
     db.session.delete(note)
     db.session.commit()
