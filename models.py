@@ -66,7 +66,6 @@ class Note(db.Model):
                     nullable=False
                    )
     owner = db.Column(db.String(50),
-        db.ForeignKey('users.username')
-                   )
+        db.ForeignKey('users.username', ondelete="CASCADE"))
 
     user = db.relationship('User')

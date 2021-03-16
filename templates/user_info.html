@@ -9,11 +9,13 @@
 <p>First Name: {{user.first_name}}</p>
 <p>Last Name: {{user.last_name}}</p>
 {% for note in user.notes %}
- <p> <a href="">Notes: {{note.title}}</a> </p>
+<div style="border: 1px solid black">
+ <p> <a href="/notes/{{note.id}}/update">Notes: {{note.title}}</a> </p>
  <p>{{note.content}}</p>
  <form action="/notes/{{note.id}}/delete" method="POST">
    <button type="submit">Delete</button>
 </form>
+</div>
 {%endfor%}
 
 <p> <a href="/users/{{user.username}}/notes/add">Add Note</a></p>
