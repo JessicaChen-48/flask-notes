@@ -36,6 +36,11 @@ class User(db.Model):
     
     notes = db.relationship('Note')
 
+    def __repr__(self):
+        """Show info about user."""
+        return f"<User username:{self.username} email:{self.email} first_name:{self.first_name} last_name:{self.last_name}>"
+
+
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
         hashed = bcrypt.generate_password_hash(pwd).decode("utf8")

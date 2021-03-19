@@ -9,20 +9,28 @@
 <p>First Name: {{user.first_name}}</p>
 <p>Last Name: {{user.last_name}}</p>
 {% for note in user.notes %}
-<div style="border: 1px solid black">
- <p> <a href="/notes/{{note.id}}/update">Notes: {{note.title}}</a> </p>
- <p>{{note.content}}</p>
- <form action="/notes/{{note.id}}/delete" method="POST">
-   <button type="submit">Delete</button>
-</form>
+
+<div class="card w-75">
+  <div class="card-body">
+    <h5 class="card-title">{{note.title}}</h5>
+    <p class="card-text">{{note.content}}</p>
+    <form>
+      <button formaction="/notes/{{note.id}}/update" formmethod="POST" class="btn btn-outline-primary btn-sm" type="submit">Edit</button>
+      <button formaction="/notes/{{note.id}}/delete" formmethod="POST" class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+   </form>
+  </div>
 </div>
 {%endfor%}
 
-<p> <a href="/users/{{user.username}}/notes/add">Add Note</a></p>
+<div class="button-wrap">
+  <form>
+      <button type="submit" formaction= "/users/{{user.username}}/notes/add"class="btn btn-info">Add Note</button>
 
-<form action="/users/{{user.username}}/delete" method="POST">
-  <button type="submit">Delete User</button>
-</form>
+      <button formaction="/users/{{user.username}}/delete" formmethod="POST" type="submit" class="btn btn-danger">Delete User</button>
+
+      <button formaction="/logout" type="submit" class="btn btn-warning">Logout</button>
+  </form>
+</div>
 
 
 {% endblock %}

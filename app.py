@@ -1,8 +1,10 @@
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, redirect, flash, session, request
 
 from models import db, connect_db, User, Note
 
 from forms import RegisterForm, LoginForm, NoteForm
+from sqlalchemy.exc import IntegrityError
+
 
 app = Flask(__name__)
 
@@ -14,52 +16,74 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 connect_db(app)
 db.create_all()
 
-
 @app.route("/")
 def homepage():
 
     return redirect("/register")
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('401.html'), 404
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
+    if "username" in session:
+        return redirect(f'/users/{session["username"]}')
+    users = User.query.all()
     form = RegisterForm()
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        email = form.email.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
+        try:
+            username = form.username.data
+            password = form.password.data
+            email = form.email.data
+            first_name = form.first_name.data
+            last_name = form.last_name.data
 
-        user = User.register(username, password, email, first_name, last_name)
-        db.session.add(user)
-        db.session.commit()
+            user = User.register(username, password, email, first_name, last_name)
+            db.session.add(user)
+            db.session.commit()
+
+        except IntegrityError:
+            if username in users:
+                flash("Username already exists.", 'danger')
+            else:
+                flash("Email already exists", 'danger')
+            return render_template('register.html', form=form)
 
         session["username"] = user.username
         return redirect(f"/users/{username}")
-
     else:
         return render_template("register.html", form=form)
 
 @app.route("/users/<username>")
 def show_secret_page(username):
-
+    users = User.query.all()
+    user_dict = dict()
+    for user in users:
+        user_dict.setdefault(user.username, user.first_name)
+        
+    if username not in user_dict:
+        return render_template("401.html"), 404
+ 
     user = User.query.get(username)
 
     if "username" not in session:
         flash("You must be logged in to view!")
-        return redirect("/")
+        return render_template("401.html"), 401
 
-    if not (session["username"] == user.username):
-        flash("You'tr noy yhid user")
-        return redirect("/")
+    elif session["username"] != user.username:
+        flash("You are not authorized.")
+        return render_template("401.html"), 401
 
     return render_template("user_info.html", user=user)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if "username" in session:
+        return redirect(f'/users/{session["username"]}')
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -151,16 +175,18 @@ def delete_note(note_id):
 
     if "username" not in session:
         flash("You must be logged in to update note!")
-        return redirect("/")
+        return redirect("401.html"), 401
 
     if not (session["username"] == curr_user):
         flash("You're not authorized")
-        return redirect("/")
+        return redirect("401.html"), 401
 
     db.session.delete(note)
     db.session.commit()
 
     return redirect(f"/users/{curr_user}")
+
+
 
 
 
